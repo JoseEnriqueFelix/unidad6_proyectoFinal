@@ -1,3 +1,8 @@
+import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.ArrayList;
+
 public class Main{
     
     final int salarioNormal_Hora=25;
@@ -5,7 +10,10 @@ public class Main{
     final int costoEsperaCamion_Hora=100;
     final int costoOperacionAlmacen_Hora=500;
 
-    static int camionesEsperando(double rnd){
+    static int precision = 5;
+    static DecimalFormat decimalFormat = new DecimalFormat("#." + "0".repeat(precision));
+
+    static int camionesEsperando(float rnd){
         if(rnd<=0.5){
             return 0;
         }
@@ -20,7 +28,7 @@ public class Main{
         }
     }
 
-    static int tiempoEntreLlegadas(double rnd){
+    static int tiempoEntreLlegadas(float rnd){
         if(rnd<=0.02){
             return 20;
         }
@@ -50,7 +58,7 @@ public class Main{
         }
     }
 
-    static int tiempoDeServicioTres(double rnd){
+    static int tiempoDeServicioTres(float rnd){
         if(rnd<=0.05){
             return 20;
         }
@@ -80,7 +88,7 @@ public class Main{
         }
     }
 
-    static int tiempoDeServicioCuatro(double rnd){
+    static int tiempoDeServicioCuatro(float rnd){
         if(rnd<=0.05){
             return 15;
         }
@@ -110,7 +118,7 @@ public class Main{
         }
     }
 
-    static int tiempoDeServicioCinco(double rnd){
+    static int tiempoDeServicioCinco(float rnd){
         if(rnd<=0.1){
             return 10;
         }
@@ -140,7 +148,7 @@ public class Main{
         }
     }
 
-    static int tiempoDeServicioSeis(double rnd){
+    static int tiempoDeServicioSeis(float rnd){
         if(rnd<=0.12){
             return 5;
         }
@@ -170,7 +178,271 @@ public class Main{
         }
     }
 
-    public static void main(String[] args) {
-        
+    static int determinarTamañoDeLaCola(ArrayList<Camion> colaCamiones, int reloj){
+        int contador=0;
+        for(int i=1; i<colaCamiones.size(); i++){
+            if(colaCamiones.get(i).getTiempoDeLlegada() <= reloj){
+                contador++;
+            }
+        }
+        return contador;
     }
-}
+
+    public static void main(String[] args) {
+        ArrayList<Camion> colaCamiones=new ArrayList<>();
+        ArrayList<Camion> listaCamiones=new ArrayList<>();
+        ArrayList<Empleado> listaEmpleados=new ArrayList<>();
+        System.out.println("CASO 3 EMPLEADOS\n");
+        for(int i=0; i<60; i++){
+            colaCamiones.clear();
+            int reloj=0;
+            boolean receso=false;
+            System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", "#alea1", "TentreLLegada", "TdeLLegada", 
+            "IniciaServicio", "#alea2", "TdeServ", "TermServ", "Ocio", "TEspC", "LC\n");
+            int camionesEsperando=camionesEsperando((float)Math.random());
+            if(camionesEsperando>0){
+                for(int j=0; j<camionesEsperando-1; j++){
+                    colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+                }
+            }
+            colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+
+            int guardaIniciaServicio=0;
+            //REVISAR
+            int j=0;
+            //
+            do{
+                if(reloj>=270 && !receso){
+                    reloj+=30;
+                    receso=true;
+                }
+                float random1=(float)Math.random();
+                Camion camion1=new Camion("Camion", 0, 0, 0, 0, 0, 0);
+                camion1.setTiempoEntreLlegada(tiempoEntreLlegadas(random1));
+                if(colaCamiones.isEmpty()){
+                    camion1.setTiempoDeLlegada(guardaIniciaServicio+camion1.getTiempoEntreLlegada());
+                }
+                else{
+                    camion1.setTiempoDeLlegada(colaCamiones.get(colaCamiones.size()-1).getTiempoDeLlegada()+camion1.getTiempoEntreLlegada());
+                }
+                colaCamiones.add(camion1);
+                Camion camion2=colaCamiones.get(0);
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
+                }
+                else{
+                    camion2.setIniciaServicio(reloj);
+                }
+                guardaIniciaServicio=camion2.getIniciaServicio();
+                float random2=(float)Math.random();
+                camion2.setTDescarga(tiempoDeServicioTres(random2));
+                camion2.setTerminaServicio(camion2.getIniciaServicio() + camion2.getTDescarga());
+                int ocio=0;
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    ocio=camion2.getTiempoDeLlegada()-reloj;
+                }
+                camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
+                reloj=camion2.getTerminaServicio();
+                int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
+                colaCamiones.remove(0);
+                System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
+                camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
+                listaCamiones.add(camion2);
+                
+            }while(reloj<=510);
+            colaCamiones.clear();
+            System.out.println();
+
+        }    
+
+        System.out.println("CASO 4 EMPLEADOS\n");
+        for(int i=0; i<60; i++){
+            colaCamiones.clear();
+            int reloj=0;
+            boolean receso=false;
+            System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", "#alea1", "TentreLLegada", "TdeLLegada", 
+            "IniciaServicio", "#alea2", "TdeServ", "TermServ", "Ocio", "TEspC", "LC\n");
+            int camionesEsperando=camionesEsperando((float)Math.random());
+            if(camionesEsperando>0){
+                for(int j=0; j<camionesEsperando-1; j++){
+                    colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+                }
+            }
+            colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+
+            int guardaIniciaServicio=0;
+            //REVISAR
+            int j=0;
+            //
+            do{
+                if(reloj>=270 && !receso){
+                    reloj+=30;
+                    receso=true;
+                }
+                float random1=(float)Math.random();
+                Camion camion1=new Camion("Camion", 0, 0, 0, 0, 0, 0);
+                camion1.setTiempoEntreLlegada(tiempoEntreLlegadas(random1));
+                if(colaCamiones.isEmpty()){
+                    camion1.setTiempoDeLlegada(guardaIniciaServicio+camion1.getTiempoEntreLlegada());
+                }
+                else{
+                    camion1.setTiempoDeLlegada(colaCamiones.get(colaCamiones.size()-1).getTiempoDeLlegada()+camion1.getTiempoEntreLlegada());
+                }
+                colaCamiones.add(camion1);
+                Camion camion2=colaCamiones.get(0);
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
+                }
+                else{
+                    camion2.setIniciaServicio(reloj);
+                }
+                guardaIniciaServicio=camion2.getIniciaServicio();
+                float random2=(float)Math.random();
+                camion2.setTDescarga(tiempoDeServicioCuatro(random2));
+                camion2.setTerminaServicio(camion2.getIniciaServicio() + camion2.getTDescarga());
+                int ocio=0;
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    ocio=camion2.getTiempoDeLlegada()-reloj;
+                }
+                camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
+                reloj=camion2.getTerminaServicio();
+                int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
+                colaCamiones.remove(0);
+                System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
+                camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
+                listaCamiones.add(camion2);
+                
+            }while(reloj<=510);
+            colaCamiones.clear();
+            System.out.println();
+
+        }  
+        
+        System.out.println("CASO 5 EMPLEADOS\n");
+        for(int i=0; i<60; i++){
+            colaCamiones.clear();
+            int reloj=0;
+            boolean receso=false;
+            System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", "#alea1", "TentreLLegada", "TdeLLegada", 
+            "IniciaServicio", "#alea2", "TdeServ", "TermServ", "Ocio", "TEspC", "LC\n");
+            int camionesEsperando=camionesEsperando((float)Math.random());
+            if(camionesEsperando>0){
+                for(int j=0; j<camionesEsperando-1; j++){
+                    colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+                }
+            }
+            colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+
+            int guardaIniciaServicio=0;
+            //REVISAR
+            int j=0;
+            //
+            do{
+                if(reloj>=270 && !receso){
+                    reloj+=30;
+                    receso=true;
+                }
+                float random1=(float)Math.random();
+                Camion camion1=new Camion("Camion", 0, 0, 0, 0, 0, 0);
+                camion1.setTiempoEntreLlegada(tiempoEntreLlegadas(random1));
+                if(colaCamiones.isEmpty()){
+                    camion1.setTiempoDeLlegada(guardaIniciaServicio+camion1.getTiempoEntreLlegada());
+                }
+                else{
+                    camion1.setTiempoDeLlegada(colaCamiones.get(colaCamiones.size()-1).getTiempoDeLlegada()+camion1.getTiempoEntreLlegada());
+                }
+                colaCamiones.add(camion1);
+                Camion camion2=colaCamiones.get(0);
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
+                }
+                else{
+                    camion2.setIniciaServicio(reloj);
+                }
+                guardaIniciaServicio=camion2.getIniciaServicio();
+                float random2=(float)Math.random();
+                camion2.setTDescarga(tiempoDeServicioCinco(random2));
+                camion2.setTerminaServicio(camion2.getIniciaServicio() + camion2.getTDescarga());
+                int ocio=0;
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    ocio=camion2.getTiempoDeLlegada()-reloj;
+                }
+                camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
+                reloj=camion2.getTerminaServicio();
+                int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
+                colaCamiones.remove(0);
+                System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
+                camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
+                listaCamiones.add(camion2);
+                
+            }while(reloj<=510);
+            colaCamiones.clear();
+            System.out.println();
+
+        }
+
+        System.out.println("CASO 6 EMPLEADOS\n");
+        for(int i=0; i<60; i++){
+            colaCamiones.clear();
+            int reloj=0;
+            boolean receso=false;
+            System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", "#alea1", "TentreLLegada", "TdeLLegada", 
+            "IniciaServicio", "#alea2", "TdeServ", "TermServ", "Ocio", "TEspC", "LC\n");
+            int camionesEsperando=camionesEsperando((float)Math.random());
+            if(camionesEsperando>0){
+                for(int j=0; j<camionesEsperando-1; j++){
+                    colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+                }
+            }
+            colaCamiones.add(new Camion("Camion", 0, 0, 0, 0, 0, 0));
+
+            int guardaIniciaServicio=0;
+            //REVISAR
+            int j=0;
+            //
+            do{
+                if(reloj>=270 && !receso){
+                    reloj+=30;
+                    receso=true;
+                }
+                float random1=(float)Math.random();
+                Camion camion1=new Camion("Camion", 0, 0, 0, 0, 0, 0);
+                camion1.setTiempoEntreLlegada(tiempoEntreLlegadas(random1));
+                if(colaCamiones.isEmpty()){
+                    camion1.setTiempoDeLlegada(guardaIniciaServicio+camion1.getTiempoEntreLlegada());
+                }
+                else{
+                    camion1.setTiempoDeLlegada(colaCamiones.get(colaCamiones.size()-1).getTiempoDeLlegada()+camion1.getTiempoEntreLlegada());
+                }
+                colaCamiones.add(camion1);
+                Camion camion2=colaCamiones.get(0);
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
+                }
+                else{
+                    camion2.setIniciaServicio(reloj);
+                }
+                guardaIniciaServicio=camion2.getIniciaServicio();
+                float random2=(float)Math.random();
+                camion2.setTDescarga(tiempoDeServicioSeis(random2));
+                camion2.setTerminaServicio(camion2.getIniciaServicio() + camion2.getTDescarga());
+                int ocio=0;
+                if(reloj<camion2.getTiempoDeLlegada()){
+                    ocio=camion2.getTiempoDeLlegada()-reloj;
+                }
+                camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
+                reloj=camion2.getTerminaServicio();
+                int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
+                colaCamiones.remove(0);
+                System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
+                camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
+                listaCamiones.add(camion2);
+                
+            }while(reloj<=510);
+            colaCamiones.clear();
+            System.out.println();
+
+        }
+    }
+}        
+        
