@@ -1,21 +1,15 @@
 public class Empleado {
-    private String nombre;
-    private int salario;
+    private int tiempoExtra;
 
-    public Empleado(String nombre, int salario){
-        this.nombre=nombre;
-        this.salario=salario;
+    public Empleado(int tiempoExtra){
+        this.tiempoExtra=tiempoExtra;
     }
 
-    public String getNombre(){
-        return nombre;
+    public int getTiempoExtra(){
+        return tiempoExtra;
     }
 
-    public int getSalario(){
-        return salario;
-    }
-
-    public void setSalario(int salario){
-        this.salario=salario;
+    public void setTiempoExtra(int tiempoExtra){
+        this.tiempoExtra=tiempoExtra;
     }
 }

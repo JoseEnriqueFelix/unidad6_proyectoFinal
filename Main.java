@@ -5,10 +5,11 @@ import java.util.ArrayList;
 
 public class Main{
     
-    final int salarioNormal_Hora=25;
-    final double salarioExtra_Hora=37.5;
-    final int costoEsperaCamion_Hora=100;
-    final int costoOperacionAlmacen_Hora=500;
+    static final int SALARIONORMALHORA=25;
+    static final double SALARIOEXTRAHORA=37.5;
+    static final int COSTOESPERACAMIONHORA=100;
+    static final int COSTOOPERACIOALMACENHORA=500;
+    static final int NUMERODETURNOS=60;
 
     static int precision = 5;
     static DecimalFormat decimalFormat = new DecimalFormat("#." + "0".repeat(precision));
@@ -190,10 +191,10 @@ public class Main{
 
     public static void main(String[] args) {
         ArrayList<Camion> colaCamiones=new ArrayList<>();
-        ArrayList<Camion> listaCamiones=new ArrayList<>();
-        ArrayList<Empleado> listaEmpleados=new ArrayList<>();
+        ArrayList<Camion> listaCamiones3=new ArrayList<>();
+        ArrayList<Empleado> listaEmpleados3=new ArrayList<>();
         System.out.println("CASO 3 EMPLEADOS\n");
-        for(int i=0; i<60; i++){
+        for(int i=0; i<NUMERODETURNOS; i++){
             colaCamiones.clear();
             int reloj=0;
             boolean receso=false;
@@ -227,6 +228,9 @@ public class Main{
                 }
                 colaCamiones.add(camion1);
                 Camion camion2=colaCamiones.get(0);
+                if(camion2.getTiempoDeLlegada()>510){
+                    break;
+                }
                 if(reloj<camion2.getTiempoDeLlegada()){
                     camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
                 }
@@ -243,20 +247,32 @@ public class Main{
                 }
                 camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
                 reloj=camion2.getTerminaServicio();
+                if(reloj>510){
+                    Empleado empleado=new Empleado(0);
+                    empleado.setTiempoExtra(reloj-510);
+                    listaEmpleados3.add(empleado);
+                }
                 int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
                 colaCamiones.remove(0);
                 System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
                 camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
-                listaCamiones.add(camion2);
+                listaCamiones3.add(camion2);
                 
             }while(reloj<=510);
             colaCamiones.clear();
             System.out.println();
 
-        }    
+        }   
+        double promedioTiempoExtra3=0;
+        for(int i=0; i<listaEmpleados3.size(); i++){
+            promedioTiempoExtra3+=listaEmpleados3.get(i).getTiempoExtra();
+        }
+        promedioTiempoExtra3/=NUMERODETURNOS;
 
+        ArrayList<Camion> listaCamiones4=new ArrayList<>();
+        ArrayList<Empleado> listaEmpleados4=new ArrayList<>();
         System.out.println("CASO 4 EMPLEADOS\n");
-        for(int i=0; i<60; i++){
+        for(int i=0; i<NUMERODETURNOS; i++){
             colaCamiones.clear();
             int reloj=0;
             boolean receso=false;
@@ -290,6 +306,9 @@ public class Main{
                 }
                 colaCamiones.add(camion1);
                 Camion camion2=colaCamiones.get(0);
+                if(camion2.getTiempoDeLlegada()>510){
+                    break;
+                }
                 if(reloj<camion2.getTiempoDeLlegada()){
                     camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
                 }
@@ -306,20 +325,33 @@ public class Main{
                 }
                 camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
                 reloj=camion2.getTerminaServicio();
+                if(reloj>510){
+                    Empleado empleado=new Empleado(0);
+                    empleado.setTiempoExtra(reloj-510);
+                    listaEmpleados4.add(empleado);
+                }
                 int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
                 colaCamiones.remove(0);
                 System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
                 camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
-                listaCamiones.add(camion2);
+                listaCamiones4.add(camion2);
                 
             }while(reloj<=510);
             colaCamiones.clear();
             System.out.println();
 
         }  
+
+        double promedioTiempoExtra4=0;
+        for(int i=0; i<listaEmpleados4.size(); i++){
+            promedioTiempoExtra4+=listaEmpleados4.get(i).getTiempoExtra();
+        }
+        promedioTiempoExtra4/=NUMERODETURNOS;
         
+        ArrayList<Camion> listaCamiones5=new ArrayList<>();
+        ArrayList<Empleado> listaEmpleados5=new ArrayList<>();
         System.out.println("CASO 5 EMPLEADOS\n");
-        for(int i=0; i<60; i++){
+        for(int i=0; i<NUMERODETURNOS; i++){
             colaCamiones.clear();
             int reloj=0;
             boolean receso=false;
@@ -353,6 +385,9 @@ public class Main{
                 }
                 colaCamiones.add(camion1);
                 Camion camion2=colaCamiones.get(0);
+                if(camion2.getTiempoDeLlegada()>510){
+                    break;
+                }
                 if(reloj<camion2.getTiempoDeLlegada()){
                     camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
                 }
@@ -369,11 +404,16 @@ public class Main{
                 }
                 camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
                 reloj=camion2.getTerminaServicio();
+                if(reloj>510){
+                    Empleado empleado=new Empleado(0);
+                    empleado.setTiempoExtra(reloj-510);
+                    listaEmpleados5.add(empleado);
+                }
                 int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
                 colaCamiones.remove(0);
                 System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
                 camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
-                listaCamiones.add(camion2);
+                listaCamiones5.add(camion2);
                 
             }while(reloj<=510);
             colaCamiones.clear();
@@ -381,8 +421,16 @@ public class Main{
 
         }
 
+        double promedioTiempoExtra5=0;
+        for(int i=0; i<listaEmpleados5.size(); i++){
+            promedioTiempoExtra5+=listaEmpleados5.get(i).getTiempoExtra();
+        }
+        promedioTiempoExtra5/=NUMERODETURNOS;
+
+        ArrayList<Camion> listaCamiones6=new ArrayList<>();
+        ArrayList<Empleado> listaEmpleados6=new ArrayList<>();
         System.out.println("CASO 6 EMPLEADOS\n");
-        for(int i=0; i<60; i++){
+        for(int i=0; i<NUMERODETURNOS; i++){
             colaCamiones.clear();
             int reloj=0;
             boolean receso=false;
@@ -416,6 +464,9 @@ public class Main{
                 }
                 colaCamiones.add(camion1);
                 Camion camion2=colaCamiones.get(0);
+                if(camion2.getTiempoDeLlegada()>510){
+                    break;
+                }
                 if(reloj<camion2.getTiempoDeLlegada()){
                     camion2.setIniciaServicio(camion2.getTiempoDeLlegada());
                 }
@@ -432,16 +483,44 @@ public class Main{
                 }
                 camion2.setTiempoEspera(camion2.getIniciaServicio()-camion2.getTiempoDeLlegada());
                 reloj=camion2.getTerminaServicio();
+                if(reloj>510){
+                    Empleado empleado=new Empleado(0);
+                    empleado.setTiempoExtra(reloj-510);
+                    listaEmpleados6.add(empleado);
+                }
                 int tamañoCola=determinarTamañoDeLaCola(colaCamiones, reloj);
                 colaCamiones.remove(0);
                 System.out.format("%1s %20s %15s %15s %15s %15s %15s %15s %15s %15s", decimalFormat.format(random1), camion2.getTiempoEntreLlegada(), camion2.getTiempoDeLlegada(), 
                 camion2.getIniciaServicio(), decimalFormat.format(random2), camion2.getTDescarga(), camion2.getTerminaServicio(), ocio, camion2.getTiempoEspera(), tamañoCola +"\n");
-                listaCamiones.add(camion2);
+                listaCamiones6.add(camion2);
                 
             }while(reloj<=510);
             colaCamiones.clear();
             System.out.println();
 
+        }
+
+        double promedioTiempoExtra6=0;
+        for(int i=0; i<listaEmpleados6.size(); i++){
+            promedioTiempoExtra6+=listaEmpleados6.get(i).getTiempoExtra();
+        }
+        promedioTiempoExtra6/=NUMERODETURNOS;
+
+        System.out.format("%1s %20s %20s %20s %20s %20s", "TamañoEquipo", "SalarioNormal", "SalarioExtra", "OcioCamion", 
+            "OperacionAlmacen", "CostosTotales\n");
+        for (int i=3; i<=6; i++){
+            double salarioExtra=0;
+            if(i==3){
+                salarioExtra=(promedioTiempoExtra3/60)*SALARIOEXTRAHORA;
+            }else if(i==4){
+                salarioExtra=(promedioTiempoExtra4/60)*SALARIOEXTRAHORA;
+            }else if(i==5){
+                salarioExtra=(promedioTiempoExtra5/60)*SALARIOEXTRAHORA;
+            }else{
+                salarioExtra=(promedioTiempoExtra6/60)*SALARIOEXTRAHORA;
+            }
+            System.out.format("%12s %20s %20s %20s %20s %20s", i, i*8*SALARIONORMALHORA, salarioExtra*i, "OcioCamion", 
+            "OperacionAlmacen", "CostosTotales\n");
         }
     }
 }        
