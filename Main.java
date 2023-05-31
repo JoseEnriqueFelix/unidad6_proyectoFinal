@@ -567,21 +567,29 @@ public class Main{
         for (int i=3; i<=6; i++){
             double salarioExtra=0;
             double ocioCamion=0;
+            double operacionAlmacen=8.5*COSTOOPERACIOALMACENHORA;
             if(i==3){
                 salarioExtra=(promedioTiempoExtra3/60)*SALARIOEXTRAHORA;
                 ocioCamion=(promedioTiempoEspera3/60)*COSTOESPERACAMIONHORA;
+                operacionAlmacen+=((promedioTiempoExtra3/60)*COSTOOPERACIOALMACENHORA);
             }else if(i==4){
                 salarioExtra=(promedioTiempoExtra4/60)*SALARIOEXTRAHORA;
                 ocioCamion=(promedioTiempoEspera4/60)*COSTOESPERACAMIONHORA;
+                operacionAlmacen+=((promedioTiempoExtra4/60)*COSTOOPERACIOALMACENHORA);
             }else if(i==5){
                 salarioExtra=(promedioTiempoExtra5/60)*SALARIOEXTRAHORA;
                 ocioCamion=(promedioTiempoEspera5/60)*COSTOESPERACAMIONHORA;
+                operacionAlmacen+=((promedioTiempoExtra5/60)*COSTOOPERACIOALMACENHORA);
             }else{
                 salarioExtra=(promedioTiempoExtra6/60)*SALARIOEXTRAHORA;
                 ocioCamion=(promedioTiempoEspera6/60)*COSTOESPERACAMIONHORA;
+                operacionAlmacen+=((promedioTiempoExtra6/60)*COSTOOPERACIOALMACENHORA);
             }
-            System.out.format("%12s %20s %20s %20s %20s %20s", i, i*8*SALARIONORMALHORA, salarioExtra*i, ocioCamion, 
-            "OperacionAlmacen", "CostosTotales\n");
+            salarioExtra*=i;
+            int salarioNormal=i*8*SALARIONORMALHORA;
+            double costosTotales=salarioNormal+salarioExtra+ocioCamion+operacionAlmacen;
+            System.out.format("%12s %20s %20s %20s %20s %20s", i, salarioNormal, salarioExtra, ocioCamion, 
+            operacionAlmacen, costosTotales+"\n");
         }
     }
 }        
